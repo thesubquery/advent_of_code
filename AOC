@@ -1,0 +1,829 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Dec 13 10:00:32 2019
+
+@author: clam
+"""
+
+
+import os
+import math
+# Day 1
+
+path = r'C:\Users\clam\Downloads\aoc_2019'
+
+
+
+with open(os.path.join(path, "input_1_1.txt"), "r") as f:
+    lines = f.readlines()
+    
+total = []
+for l in lines:
+    l = l.strip()
+    l = math.floor(int(l) / 3.0) - 2
+    total.append(l)
+    print(l)
+
+sum(total)
+
+
+
+def fuel(num):
+    return math.floor(num / 3.0) - 2
+
+total = []
+for l in lines:
+    l = l.strip()
+    l = int(l)
+    
+    while fuel(l) >= 0:
+        total.append(fuel(l))
+        l = fuel(l)
+    
+sum(total)
+
+import inspect
+import pandas
+print(inspect.getsource(pandas.DataFrame))
+
+
+with open(os.path.join(path, "input_1_2.txt"), "r") as f:
+    lines = f.readlines()
+
+data = lines[0].strip()
+data = data.split(",")
+data = [int(each) for each in data]
+
+
+def intcode(arr):
+    opcode = None
+    index  = 0
+    while opcode != 99:
+        opcode = arr[index]
+        if opcode in [1, 2]:
+            input1 = arr[index+1]
+            input2 = arr[index+2]
+            output = arr[index+3]
+            if opcode == 1:
+                arr[output] = arr[input1] + arr[input2]
+            elif opcode == 2:
+                arr[output] = arr[input1] * arr[input2]
+            index += 4
+        elif opcode == 99:
+            return arr
+        elif opcode != 99:
+            print(index, opcode)
+            break
+    return None
+
+
+data[1] = 12
+data[2] = 2
+result  = intcode(data)
+result[0]
+
+n = len(data)
+
+flag = True
+for i in range(n):
+    for j in range(n):
+        data    = lines[0].strip()
+        data    = data.split(",")
+        data    = [int(each) for each in data]        
+        data[1] = i
+        data[2] = j
+        if intcode(data)[0] == 19690720:
+            print(100 * i + j)
+            flag = False
+            break
+    if flag == False:
+        break
+        
+
+
+with open(os.path.join(path, "input_3_1.txt"), "r") as f:
+    lines = f.readlines()
+
+wire_path = []
+for l in lines:
+    l = l.strip()
+    l = l.split(",")
+    data = []
+    for direct in l:
+        data.append((direct[0], int(direct[1:])))
+        print(direct, data[-1])
+    wire_path.append([d for d in data])
+
+
+def gen_path(inst):
+    directions = {
+            'U': ( 0,  1),
+            'D': ( 0, -1),
+            'R': ( 1,  0),
+            'L': (-1,  0)
+            }
+    current_coord = (0, 0)
+    coords = []
+    while inst:
+        i     = inst.pop(0)
+        d     = i[0]
+        dest  = i[1]
+        x1    = current_coord[0]
+        y1    = current_coord[1]
+        x2    = directions[d][0]
+        y2    = directions[d][1]
+        dest  = (x1 + x2 * dest, y1 + y2*dest)
+        print(current_coord, dest)
+        while dest != current_coord:
+            x1    = current_coord[0]
+            y1    = current_coord[1]
+            x2    = directions[d][0]
+            y2    = directions[d][1]     
+            x3    = x1 + x2
+            y3    = y1 + y2
+            coords.append((x3, y3))
+            current_coord = (x3, y3)
+    return coords
+            
+
+path1 = gen_path(wire_path[0])
+path2 = gen_path(wire_path[1])
+
+inter = path1.intersection(path2)
+
+
+min_dist = float("inf")
+coord    = (0, 0)
+
+for i in inter:
+    total = abs(i[0]) + abs(i[1])
+    if total < min_dist:
+        min_dist = total
+        coord = i
+min_dist
+
+
+min([path1.index(each) + path2.index(each) for each in inter])
+    print(path1.index(each) + path2.index(each))
+
+
+
+import itertools
+x = [i for i in range(10)]
+perm = [p for p in itertools.product(x, repeat=6)]
+
+
+len(perm)
+
+10 ** 6
+
+def validate_password1(pwd):
+    flag = True
+    if len(pwd) != 6:
+        return False
+    
+    for i in range(5):
+        if pwd[i] > pwd[i+1]:
+            return False
+    flag = False
+    for i in range(5):
+        if pwd[i] == pwd[i+1]:
+            flag = True
+    if flag:
+        return True
+    else:
+        return False
+
+def validate_password2(pwd):
+    flag = True
+    if len(pwd) != 6:
+        return False
+    
+    for i in range(5):
+        if pwd[i] > pwd[i+1]:
+            return False
+    count = [1, 1, 1, 1, 1, 1]
+    for i in range(1, 6):
+        if pwd[i] == pwd[i-1]:
+            count[i] = count[i-1] + 1
+        else:
+            count[i] = 1
+    string = "".join([str(each) for each in count])
+    if "21" in string or string[-2:] == "12":
+        return True
+    return False
+
+
+total = 0
+lower = 353096
+upper = 843212
+
+for p in perm:
+    num = int("".join([str(each) for each in p]))
+    if lower < num < upper and validate_password2(p):
+        total += 1
+        print(p)
+print(total)
+
+
+# Day 5
+
+class Opcode():
+    def __init__(self, opcode, ID):
+        opcode = str(opcode)
+        self.input = int(ID)
+        self.known_opcodes = {1: 3, 
+                              2: 3, 
+                              3: 1, 
+                              4: 1,
+                              99: 0}
+        
+        if type(opcode) != str:
+            raise Exception("Not a string: ", opcode)
+            
+        self.param_mode = [0, 0, 0]
+        self.opcode     = int(opcode[-2:])
+
+        if self.opcode not in self.known_opcodes:
+            raise Exception("Invalid opcode: ", self.opcode)
+            
+        index = 0
+        for each in opcode[-3: -6: -1]:
+            self.param_mode[index] = int(each)
+            index                 += 1
+            
+        
+        if self.opcode in [3, 4]:
+            self.param_mode[0] = 1
+    
+    def __repr__(self):
+        data = [self.opcode] + self.param_mode
+        return "|{}|".format("|".join([str(each) for each in data]))
+    
+
+    def get_num_args(self):
+        return self.known_opcodes[self.opcode]
+            
+    def get_args(self, mode, arg, data):
+        if mode == 0:
+            return int(data[arg])
+        elif mode == 1:
+            return int(arg)
+        else:
+            raise Exception("Invalid mode: ", mode)
+
+    def get_input(self):
+        return self.input
+
+    def execute(self, args, data):
+        
+        args = [int(each) for each in args]
+                
+        for i in range(len(args)):
+            args[i] = self.get_args(self.param_mode[i], args[i], data)
+        
+        print(args)
+        if self.opcode == 1:
+            data[args[2]] = args[0] + args[1]
+        elif self.opcode == 2:
+            data[args[2]] = args[0] * args[1]
+        elif self.opcode == 3:
+            data[args[0]] = self.input
+        elif self.opcode == 4:
+            self.input = data[args[0]]
+        
+        return data
+
+
+def intcode(data, ID):
+    ptr   = 0
+    inst  = Opcode(data[ptr], ID)
+    while inst.opcode != 99:
+        
+        num  = inst.get_num_args()
+        print(ptr, data[ptr:ptr+num+1])
+        args = [int(each) for each in data[ptr+1:ptr+1+num]]
+        print(args)
+        data = inst.execute(args, data)
+        ID   = inst.get_input()
+        ptr += num+1
+        inst = Opcode(data[ptr], ID)
+    
+    return ID, data
+    
+with open(os.path.join(path, "input_5_1.txt"), "r") as f:
+    lines = f.readlines()
+
+data = lines[0].strip().split(",")
+
+ID, data = intcode(data, 1)
+
+
+
+
+
+
+
+o = Opcode("1002", 1)
+o.get_num_args()
+o.get_args(0, 1, data)
+o.execute([4, 3, 4], data)[:10]
+
+s = "Hello"
+type(s) == str
+
+
+
+
+# Day 10
+
+from math import sqrt
+from itertools import permutations
+class Point:
+    def __init__(self, coord):
+        self.x     = coord[0]
+        self.y     = coord[1]
+        self.coord = coord
+        self.dist  = 0
+
+    def __eq__(self, Point):
+        return self.x == Point.x and self.y == Point.y
+
+    def __repr__(self):
+        return "({:2}, {:2}) {:.4f}".format(self.x, self.y, self.dist)
+
+def distance(a,b):
+    return sqrt((a.x - b.x)**2 + (a.y - b.y)**2)
+
+def is_between(a,c,b, precision = 10):
+    return round(distance(a,c), precision) + round(distance(c,b), precision) == round(distance(a,b), precision)
+
+def collinear(x1, y1, x2, y2, x3, y3): 
+      
+    """ Calculation the area of   
+        triangle. We have skipped  
+        multiplication with 0.5 to 
+        avoid floating point computations """
+    a = x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2) 
+    
+    if a != int(a):
+        print(a)
+    
+    if (a == 0): 
+        return True
+    else: 
+        return False
+
+collinear(201, 201, 101, 101, 1, 1)
+
+with open(os.path.join(path, "input_10_1.txt"), "r") as f:
+    lines = f.readlines()
+
+lines = """
+.#....#####...#..
+##...##.#####..##
+##...#...#.#####.
+..#.....X...###..
+..#.#.....#....##
+"""
+lines = lines.strip()
+lines = lines.split("\n")
+
+data = [each.strip() for each in lines]
+data = [list(each) for each in data]
+
+for row in data:
+    print("".join(row))
+
+asteriods = set()
+
+for x in range(len(data)):
+    for y in range(len(data[0])):
+        if data[x][y] != '.':
+            coord = (x, y)
+            asteriods.add(coord)
+            print(data[x][y], coord)
+
+best = {}
+
+for coord in asteriods:
+    best[coord] = {}
+    a           = Point(coord)
+    neighbors   = []
+    
+    for b in asteriods:
+        b = Point(b)
+        if a != b:
+            b.dist = distance(a, b)
+            neighbors.append(b)
+            
+    neighbors = sorted(neighbors, key = lambda x: x.dist)
+    
+    for b in neighbors:
+        degrees = math.degrees(math.atan2(b.x - a.x, b.y - a.y))        
+        if degrees not in best[coord]:
+            best[coord][degrees] = []
+        best[coord][degrees].append(b)
+
+r = max(best.items(), key=lambda x: len(x[1]))
+print("Coordinate: {} Count: {}".format(r[0], len(r[1])))
+
+
+
+
+degrees = list(best[r[0]].keys())
+degrees.sort()
+start   = -90
+degrees = degrees[degrees.index(start):] + degrees[:degrees.index(start)]
+
+counter = 0
+destroyed = []
+for d in degrees:
+    ast = best[r[0]][d]
+    if ast:
+        coord    = ast.pop(0)
+        destroyed.append(coord)
+        counter += 1
+        print("{:<3} {} {}".format(counter, coord, d))
+    if counter == 200:
+        print(coord.x * 100 + coord.y)
+        print(coord.y * 100 + coord.x)
+        break
+
+
+
+
+
+arr = [["[   ]"] * len(data[0]) for each in range(len(data))]
+counter = 1
+for each in destroyed:
+    x = each.x
+    y = each.y
+    arr[x][y] = "[{}]".format(str(counter).rjust(3))
+    counter += 1
+    
+    
+    
+arr[r[0][0]][r[0][1]] = "[XXX]"
+
+
+for a in arr:
+    print(" ".join(a) + "\n")
+
+a = Point((1, 0))
+b = Point((0, 0))
+
+math.degrees(math.atan2(b.x - a.x, b.y - a.y))
+
+
+# Day 24
+
+with open(os.path.join(path, "input_24.txt"), "r") as f:
+    lines = f.readlines()
+
+
+
+lines = """
+....#
+#..#.
+#..##
+..#..
+#....
+"""
+lines = lines.strip()
+lines = lines.split("\n")
+
+data = [each.strip() for each in lines]
+data = [list(each) for each in data]
+
+directions = [( 0,  1),
+              ( 1,  0),
+              ( 0, -1),
+              (-1,  0)]
+
+
+
+history = []
+phase   = [[j for j in i] for i in data]
+flag    = True
+while flag:
+    copy = [["." for j in range(len(data[0]))] for i in range(len(data))]
+    msg = ""
+    for row in phase:
+        msg += "".join(row)
+    
+    if msg in history:
+        flag = False
+        history.append(msg)
+        print(len(history))
+        for row in phase:
+            print("".join(row))
+        print("\n\n")
+        counter = 0
+        for row in history:
+            print(counter, row)
+            counter += 1
+        break
+    else:
+        history.append(msg)
+        
+    for x1 in range(len(phase)):
+        for y1 in range(len(phase[0])):
+            
+            bug_count = 0
+            if phase[x1][y1] == "#":
+                bug = True
+            else:
+                bug = False
+            
+            for d in directions:
+                x2 = x1 + d[0]
+                y2 = y1 + d[1]
+                if 0 <= x2 < len(data) and 0 <= y2 < len(data[0]):
+                    if phase[x2][y2] == "#":
+                        bug_count += 1
+            
+            if bug and bug_count != 1:
+                copy[x1][y1] = "."
+            elif not bug and 1 <= bug_count <= 2:
+                copy[x1][y1] = "#"
+            else:
+                copy[x1][y1] = phase[x1][y1]
+    
+    phase = [[col for col in row] for row in copy]
+
+total = 0
+power = 2
+count = 0
+    
+for x1 in range(len(phase)):
+    for y1 in range(len(phase[0])):    
+        if phase[x1][y1] == "#":
+            total += power ** count
+        print(count+1, power ** count, total)
+        count += 1
+                            
+
+
+
+
+
+with open(os.path.join(path, "input_24.txt"), "r") as f:
+    lines = f.readlines()
+
+
+
+#lines = """
+#....#
+##..#.
+##..##
+#..#..
+##....
+#"""
+#lines = lines.strip()
+#lines = lines.split("\n")
+
+
+
+
+
+
+
+# (level, box_number (0-24))
+    
+neighbors = {i: [] for i in range(25)}
+var1 = {(-1,  7): [0, 1, 2, 3, 4],
+        (-1, 11): [0, 5, 10, 15, 20],
+        (-1, 13): [4, 9, 14, 19, 24],
+        (-1, 17): [20, 21, 22, 23, 24]
+        }
+for each in var1.items():
+    for index in each[1]:
+        neighbors[index].append(each[0])
+        neighbors[each[0][1]].append((1, index))
+
+directions = [( 0,  1),
+              ( 1,  0),
+              ( 0, -1),
+              (-1,  0)]
+
+
+test = {}
+
+counter = 0
+for x1 in range(len(data)):
+    for y1 in range(len(data[0])):
+        test[(x1, y1)] = counter
+        counter += 1
+
+for x1 in range(len(data)):
+    for y1 in range(len(data[0])):
+        for d in directions:
+            x2 = x1 + d[0]
+            y2 = y1 + d[1]
+            if (x2, y2) in test:
+#                print((x2, y2), test[(x2, y2)])
+                neighbors[test[(x1, y1)]].append((0, test[(x2, y2)]))
+del neighbors[12]
+for key in neighbors.items():    
+    neighbors[key[0]] = [n for n in key[1] if n[1] != 12]
+
+
+
+
+for i in neighbors.items():
+    j = {}
+    for k in i[1]:
+        if k[0] not in j:
+            j[k[0]] = {}
+        j[k[0]][k[1]] = None
+#    print("{:>2}".format(i[0]))
+    for key in j:
+#        print("  {:>2}".format(key))
+        for each in j[key]:
+#            print("\t{:>2}".format(each))
+            print(i[0], key, each)
+
+
+
+with open(os.path.join(path, "input_24.txt"), "r") as f:
+    lines = f.readlines()
+
+
+#lines = """
+#....#
+##..#.
+##.?##
+#..#..
+##....
+#"""
+#lines = lines.strip()
+#lines = lines.split("\n")
+
+
+data = [each.strip() for each in lines]
+data = [list(each) for each in data]
+levels = {0: {}}
+
+counter = 0
+for row in data:
+    msg = ""
+    for col in row:
+        levels[0][counter] = col
+        msg += str(counter).rjust(3)
+        counter += 1
+    print(msg)
+levels[0][12] = "?"
+        
+        
+from copy import deepcopy
+counter = 1
+while counter <= 200:
+    keys = list(levels.keys())
+    keys.sort()
+    for k in keys:
+#        for n in levels[k]:
+#            status = levels[k][n]
+#            if status == "#":
+        # Check if level exists
+        if k-1 not in levels:
+            levels[k-1] = {i: "." for i in range(25)}
+            levels[k-1][12] = "?"
+        if k+1 not in levels:
+            levels[k+1] = {i: "." for i in range(25)}
+            levels[k+1][12] = "?"
+#    copy = deepcopy(levels)
+    temp_level = { k : { v: levels[k][v]  for v in levels[k]} for k in levels}
+    
+    keys = list(levels.keys())
+#    keys.sort()
+    for k in keys:
+        for n in levels[k]:                     
+            if n != 12:
+                status = levels[k][n]
+                                
+                
+                # Bug Count
+                bug_count = 0
+                for each in neighbors[n]:                    
+                    lvl = each[0]
+                    box = each[1]
+                    if box != 12:
+#                        print(k, n, lvl, box)
+                        if k+lvl in levels and levels[k+lvl][box] == "#":
+
+                            bug_count += 1
+
+                if status == "#" :
+                    if bug_count != 1:
+                        temp_level[k][n] = "."
+                    else:
+                        temp_level[k][n] = "#"
+                else:
+                    if 1 <= bug_count <= 2:
+                        temp_level[k][n] = "#"
+                    else:
+                        temp_level[k][n] = "."
+#                else:
+#                    copy[k][n] = levels[k][n]
+
+#    keys = list(levels.keys())
+#    keys.sort()
+    
+#    for lvl in keys:
+#        print("\nDepth {:>3}:".format(lvl))
+#        arr = "".join([x[1] for x in levels[lvl].items()])
+#        for i in range(0, len(arr), 5):
+#            print(arr[i:i+5])
+
+#    for lvl in keys:
+#        print("\nDepth {:>3}:".format(lvl))
+#        arr = "".join([x[1] for x in copy[lvl].items()])
+#        for i in range(0, len(arr), 5):
+#            print(arr[i:i+5])
+
+#    levels = deepcopy(copy)
+    levels = { k : { v: temp_level[k][v]  for v in temp_level[k]} for k in temp_level}
+    total  = 0
+    for each in levels.items():
+        for box in each[1].items():
+            if box[1] == "#":
+                total += 1
+                
+                
+    print("Minute: {:>3} Total Bugs: {:>4}".format(counter, total))
+    print("-"*100)             
+    counter += 1
+        
+
+
+    
+    
+        
+  0  1  2  3  4
+  5  6  7  8  9
+ 10 11 12 13 14
+ 15 16 17 18 19
+ 20 21 22 23 24
+        
+print(total)
+        
+        
+neighbors[11]        
+        
+a = {1: {2: None}}
+b = a.copy()
+b[1][2] = 2
+a
+        
+        
+        
+        
+        
+        
+                
+class Mouse():
+    def __init__(self, ID):
+        self.ID = ID
+        self.bottles = []
+    def __repr__(self):
+        return "{}".format(str(self.ID).ljust(2))
+
+
+mice = []
+for i in range(50):
+    mice.append(Mouse(i))
+
+bottles = 100
+b = {}
+for i in range(bottles):
+    mice[i % 50].bottles.append(i)
+    mice[(i+1) % 50].bottles.append(i)
+    b[i] = [mice[i % 50], mice[(i+1) % 50]]
+    
+b    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
