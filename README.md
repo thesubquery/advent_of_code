@@ -24,14 +24,15 @@ advent_of_code
 
 `2019\input` - Input files from AOC.
 
-## Sample Usage 
+## Usage 
 
-```console
-$python aoc2019.py 1 1 01_input.txt
-
-Day 1 Part 1 Solution: 3391707
+**Format**
+```shell
+$python aoc2019.py <day #> <part #> <input_file>
 ```
 
-```console
-$python aoc2019.py <day #> <part #> <input_file>
+**Sample Usage**
+```shell
+$python aoc2019.py 1 1 01_input.txt
+Day 1 Part 1 Solution: 3391707
 ```
