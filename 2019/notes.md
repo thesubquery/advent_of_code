@@ -54,6 +54,18 @@ Triggering function calls
 
 ### Unit testing
 
+**VS Code**
+
+In VS Code, go to `Python: Discover Tests`
+
+### Git Repo(s)
+
+`.gitignore`
+
+To retroactively remove files in `.gitignore`, remove the cache
+```
+git rm --cached <*.code-workspace>
+```
 
 
 ### Notes
