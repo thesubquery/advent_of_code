@@ -2,6 +2,28 @@ import argparse
 import os
 import sys
 
+def get_input(file):
+    with open(file, 'r') as f:
+        data = f.readlines()
+    data = [d.strip() for d in data]
+    return data
+
+def day_1(part, file):
+    data = get_input(file)
+    data = [int(num) for num in data]
+
+    if part == 1:
+        data = [num // 3 - 2 for num in data]
+        return sum(data)
+    elif part == 2:
+        total = 0
+        for mass in data:
+            while mass > 0:
+                fuel   = mass // 3 - 2
+                total += max(0, fuel)
+                mass   = fuel
+        return total
+
 
 if __name__ == "__main__":
 
@@ -31,9 +53,24 @@ if __name__ == "__main__":
     # Solutions nested by day and part number
     solutions = {i: {1: "Day: {} Part 1".format(i), 2: "Day: {} Part 2".format(i)} for i in range(1, 26)}
 
+    solutions[1][1] = day_1
+    solutions[1][2] = day_1
+
+    # Print input
+    if args.verbose:
+        data = get_input(path)
+        for d in enumerate(data):
+            print(d)
+
+
+    # Execute solution
+    sol = solutions[args.day][args.part]
+    print("Solution: {}".format(sol(args.part, path)))
+    
+
     # print(vars(args))
     # print(solutions[args.day][args.part])
 
-    print(path)
+    # print(path)
 
 
