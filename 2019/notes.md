@@ -56,3 +56,6 @@ Triggering function calls
 
 
 
+### Notes
+
+- Quickly toogle between Editor and Terminal with `Ctrl + ` `: https://stackoverflow.com/questions/42796887/switch-focus-between-editor-and-integrated-terminal-in-visual-studio-code
