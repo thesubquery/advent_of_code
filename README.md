@@ -18,11 +18,13 @@ advent_of_code
     │       ...
 ```
 
-`aoc2019.py` - Solutions to Advent of Code 2019.
+`aoc*.py` - Solutions to Advent of Code for that year.
 
-`test_aoc2019.py` - Unit tests based on AOC instructions and solved problems.
+`test_aoc*.py` - Unit tests based on AOC instructions and solved problems.
 
-`2019\input` - Input files from AOC.
+`*\input` - Input files from AOC.
+
+`*\writeups` - Write ups for each day.
 
 ## Usage 
 
@@ -33,6 +35,6 @@ $python aoc2019.py <day #> <part #> <input_file>
 
 **Sample Usage**
 ```shell
-$python aoc2019.py 1 1 01_input.txt
+$python aoc2019.py 1 1 day_1.txt
 Day 1 Part 1 Solution: 3391707
 ```
