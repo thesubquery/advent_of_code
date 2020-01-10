@@ -45,6 +45,57 @@ def day_2(part, data):
                 if int(program.data[0]) == 19690720:
                     return 100 * noun + verb
 
+def day_3(part, data):
+    directions = {'U': (-1,  0),
+                  'D': ( 1,  0),
+                  'L': ( 0, -1),
+                  'R': ( 0,  1),}
+
+    # Part 1
+
+    """
+    Each input has two rows of comma separated strings.
+    <direction><number of steps> Example: R8 means go right 8 steps.
+    """
+
+    # Collect all cartesians coordinates (x, y) start from (0, 0)
+    # given each instruction.
+    all_paths = []
+    for wire in data:
+        wire  = wire.split(",")
+        start = (0, 0)
+        path  = []
+        for inst in wire:
+            d   = inst[0]
+            num = int(inst[1:])
+            while num > 0:
+                x = start[0] + directions[d][0]
+                y = start[1] + directions[d][1]
+                start = (x, y)
+                path.append(start)
+                num -= 1
+        all_paths.append(path)
+    
+    # Get the interesection of both wires.
+    a = set(all_paths[0])
+    b = set(all_paths[1])
+    intersect = a.intersection(b)
+
+    if part == 1:
+        # Sort the intersection by Manhattan distance: abs(x) + abs(y)
+        intersect = sorted(intersect, key= lambda x: abs(x[0]) + abs(x[1]))
+        closest   = intersect[0]
+        closest   = sum([abs(each) for each in closest])
+    elif part == 2:
+        wire1     = all_paths[0]
+        wire2     = all_paths[1]
+        intersect = sorted(intersect, key= lambda x: wire1.index(x) + wire2.index(x) + 2)
+        closest   = intersect[0]
+        closest   = wire1.index(closest) + wire2.index(closest) + 2      
+
+    return closest
+
+
 if __name__ == "__main__":
 
     # Command line options
@@ -53,7 +104,7 @@ if __name__ == "__main__":
                                         description='Solutions to Advent of Code problems.')
 
     # Add positional arguments
-    my_parser.add_argument('day', type=int, help='Day 1 through 25', choices=range(1, 3))
+    my_parser.add_argument('day', type=int, help='Day 1 through 25', choices=range(1, 4))
     my_parser.add_argument('part', type=int, help='Part 1 or 2', choices=range(1, 3))
     my_parser.add_argument('input_file', type=str, help='Path to input file')
 
@@ -77,7 +128,9 @@ if __name__ == "__main__":
     solutions[1][2] = day_1
     solutions[2][1] = day_2
     solutions[2][2] = day_2
-    
+    solutions[3][1] = day_3
+    solutions[3][2] = day_3
+
     # Print input
     if args.verbose:
         data = get_input(path)
