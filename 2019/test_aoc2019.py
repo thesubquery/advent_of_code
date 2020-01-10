@@ -38,6 +38,11 @@ class Test_aoc2019(unittest.TestCase):
         data = run_intcode([2,4,4,5,99,0])
         self.assertEqual(data, [2,4,4,5,99,9801])
         data = run_intcode([1,1,1,4,99,5,6,0,99])
-        self.assertEqual(data, [30,1,1,4,2,5,6,0,99])                
+        self.assertEqual(data, [30,1,1,4,2,5,6,0,99])         
+
+    def test_day_3(self):
+        # Part 1
+        data  = ["R8,U5,L5,D3", "U7,R6,D4,L4"]
+        self.assertEqual(aoc2019.day_3(1, data), 6)
        
         
