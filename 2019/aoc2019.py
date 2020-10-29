@@ -96,7 +96,35 @@ def day_3(part, data):
     return closest
 
 def day_4(part, data):
-    pass
+    """
+    """
+
+    lower = int(data[0].split('-')[0])
+    upper = int(data[0].split('-')[1])
+
+    counter = 0
+
+    for i in range(lower, upper):
+        num  = str(i)
+        flag = False
+        pair = False
+        for j in range(1, 6):
+            # Check for non decreasing number
+            if num[j-1] > num[j]:
+                flag = True
+                break
+            # Check for adjacent pair
+            if part == 1:
+                if num[j-1] == num[j]:
+                    pair = True
+            elif part == 2:
+                if num[j-1] == num[j] and num[j] * 3 not in num:
+                    pair = True
+
+        if not flag and pair:
+            counter += 1
+    
+    return counter
 
 def day_5(part, data):
         pass
@@ -149,7 +177,7 @@ if __name__ == "__main__":
                                         description='Solutions to Advent of Code problems.')
 
     # Add positional arguments
-    my_parser.add_argument('day', type=int, help='Day 1 through 25', choices=range(1, 4))
+    my_parser.add_argument('day', type=int, help='Day 1 through 25', choices=range(1, 26))
     my_parser.add_argument('part', type=int, help='Part 1 or 2', choices=range(1, 3))
     my_parser.add_argument('input_file', type=str, help='Path to input file')
 
@@ -175,6 +203,9 @@ if __name__ == "__main__":
     solutions[2][2] = day_2
     solutions[3][1] = day_3
     solutions[3][2] = day_3
+    solutions[4][1] = day_4
+    solutions[4][2] = day_4
+
 
     # Print input
     if args.verbose:
