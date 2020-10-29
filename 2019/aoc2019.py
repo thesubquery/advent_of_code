@@ -95,6 +95,51 @@ def day_3(part, data):
 
     return closest
 
+def day_4(part, data):
+    pass
+
+def day_5(part, data):
+        pass
+def day_6(part, data):
+        pass
+def day_7(part, data):
+        pass
+def day_8(part, data):
+        pass
+def day_9(part, data):
+        pass
+def day_10(part, data):
+        pass
+def day_11(part, data):
+        pass
+def day_12(part, data):
+        pass
+def day_13(part, data):
+        pass
+def day_14(part, data):
+        pass
+def day_15(part, data):
+        pass
+def day_16(part, data):
+        pass
+def day_17(part, data):
+        pass
+def day_18(part, data):
+        pass
+def day_19(part, data):
+        pass
+def day_20(part, data):
+        pass
+def day_21(part, data):
+        pass
+def day_22(part, data):
+        pass
+def day_23(part, data):
+        pass
+def day_24(part, data):
+        pass
+def day_25(part, data):
+        pass
 
 if __name__ == "__main__":
 
