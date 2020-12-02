@@ -45,119 +45,16 @@ def day_1(part, data):
                     break
 
 def day_2(part, data):
-
-    data = data[0].strip().split(',')
-
-    if part == 1:
-        program = Intcode(data)
-        program.data[1] = 12
-        program.data[2] = 2
-        program.run(None)
-        return program.data[0]   
-
-    elif part == 2:
-        for noun in range(len(data)):
-            for verb in range(len(data)):
-                program = Intcode(data)
-                program.data[1] = noun
-                program.data[2] = verb
-                program.run(None)
-                if int(program.data[0]) == 19690720:
-                    return 100 * noun + verb
+    pass
 
 def day_3(part, data):
-    directions = {'U': (-1,  0),
-                  'D': ( 1,  0),
-                  'L': ( 0, -1),
-                  'R': ( 0,  1),}
-
-    # Part 1
-    """
-    Each input has two rows of comma separated strings.
-    <direction><number of steps> Example: R8 means go right 8 steps.
-    """
-
-    # Collect all cartesians coordinates (x, y) start from (0, 0)
-    # given each instruction.
-    all_paths = []
-    for wire in data:
-        wire  = wire.split(",")
-        start = (0, 0)
-        path  = []
-        for inst in wire:
-            d   = inst[0]
-            num = int(inst[1:])
-            while num > 0:
-                x = start[0] + directions[d][0]
-                y = start[1] + directions[d][1]
-                start = (x, y)
-                path.append(start)
-                num -= 1
-        all_paths.append(path)
-    
-    # Get the interesection of both wires.
-    a = set(all_paths[0])
-    b = set(all_paths[1])
-    intersect = a.intersection(b)
-
-    if part == 1:
-        # Sort the intersection by Manhattan distance: abs(x) + abs(y)
-        intersect = sorted(intersect, key= lambda x: abs(x[0]) + abs(x[1]))
-        closest   = intersect[0]
-        closest   = sum([abs(each) for each in closest])
-    elif part == 2:
-        wire1     = all_paths[0]
-        wire2     = all_paths[1]
-        intersect = sorted(intersect, key= lambda x: wire1.index(x) + wire2.index(x) + 2)
-        closest   = intersect[0]
-        closest   = wire1.index(closest) + wire2.index(closest) + 2      
-
-    return closest
+    pass
 
 def day_4(part, data):
-    """
-    """
-
-    lower = int(data[0].split('-')[0])
-    upper = int(data[0].split('-')[1])
-
-    counter = 0
-
-    for i in range(lower, upper):
-        num  = str(i)
-        flag = False
-        pair = False
-        for j in range(1, 6):
-            # Check for non decreasing number
-            if num[j-1] > num[j]:
-                flag = True
-                break
-            # Check for adjacent pair
-            if part == 1:
-                if num[j-1] == num[j]:
-                    pair = True
-            elif part == 2:
-                if num[j-1] == num[j] and num[j] * 3 not in num:
-                    pair = True
-
-        if not flag and pair:
-            counter += 1
-    
-    return counter
+    pass
 
 def day_5(part, data):
-    
-    data = data[0].split(',')
-
-    if part == 1:
-        program = Intcode(data)
-        program.run(1)
-        return program.ID
-
-    elif part == 2:
-        program = Intcode(data)
-        program.run(5)
-        return program.ID
+    pass
 
 def day_6(part, data):
         pass
