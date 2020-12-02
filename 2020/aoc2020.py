@@ -1,6 +1,7 @@
 # Python Standard Library
 import argparse
 import os
+import re
 import sys
 
 from collections import Counter
@@ -45,7 +46,36 @@ def day_1(part, data):
                     break
 
 def day_2(part, data):
-    pass
+
+    pattern = "(\d+)-(\d+) ([a-z]{1}): ([a-z]+)"
+    prog = re.compile(pattern)
+
+    valid = 0
+
+    for string in data:
+        inst = prog.match(string.strip())
+        if not inst:
+            raise Exception(f"Pattern '{pattern}' did not find a match in string '{string}'.")
+        else:
+            inst = inst.groups()
+
+        lower = int(inst[0])
+        upper = int(inst[1])
+        ltr   = inst[2]
+        pw    = inst[3]
+
+        if part == 1:
+            pw = Counter(pw)
+            if ltr in pw:
+                if lower <= pw[ltr] <= upper:
+                    valid += 1
+
+        elif part == 2:
+            if upper <= len(pw):
+                if ltr in [pw[lower-1], pw[upper-1]] and pw[lower-1] != pw[upper-1]:
+                    valid += 1
+    
+    return valid
 
 def day_3(part, data):
     pass
