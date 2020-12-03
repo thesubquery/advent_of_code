@@ -30,7 +30,7 @@ class Intcode():
         return self.opcode_args[self.opcode]
 
     def update_inst(self):
-        opcode          = self.data[self.ptr]
+        opcode          = str(self.data[self.ptr])
         self.opcode     = int(opcode[-2:])
         self.param_mode = [0, 0, 0]
         if len(opcode) > 2:
@@ -43,27 +43,29 @@ class Intcode():
         self.ID = ID
         self.update_inst()
         while self.opcode != 99:
-            
+
             num   = self.get_num_args()
             args  = [int(each) for each in self.data[self.ptr+1:self.ptr+1+num]]
-            
-            # print(self.ptr, self.opcode, args, self.data[self.ptr:self.ptr+num+1])
-            # print(self.ptr, self.opcode, args, self.data)
+            msg   = ', '.join([str(x) for x in args])
+
+            print(f"Opcode: [{self.opcode}] Args: [{msg}]")
             
             if self.opcode == 1:
                 val1          = self.get_arg(self.param_mode[0], args[0], self.data)
                 val2          = self.get_arg(self.param_mode[1], args[1], self.data)
                 self.data[args[2]] = str(val1 + val2)
-                # print(self.ptr, self.opcode, args, val1, val2, self.data[self.ptr:self.ptr+num+1])
+
             elif self.opcode == 2:
                 val1          = self.get_arg(self.param_mode[0], args[0], self.data)
                 val2          = self.get_arg(self.param_mode[1], args[1], self.data)
                 self.data[args[2]] = str(val1 * val2)
-                # print(self.ptr, self.opcode, args, val1, val2, self.data[self.ptr:self.ptr+num+1])
+
             elif self.opcode == 3:
                 self.data[args[0]] = str(self.ID)
+
             elif self.opcode == 4:
                 self.ID = int(self.data[args[0]])
+
             elif self.opcode == 5:
                 val1          = self.get_arg(self.param_mode[0], args[0], self.data)
                 val2          = self.get_arg(self.param_mode[1], args[1], self.data)
@@ -71,6 +73,7 @@ class Intcode():
                     self.ptr = val2
                     self.update_inst()
                     continue
+
             elif self.opcode == 6:
                 val1          = self.get_arg(self.param_mode[0], args[0], self.data)
                 val2          = self.get_arg(self.param_mode[1], args[1], self.data)
@@ -78,6 +81,7 @@ class Intcode():
                     self.ptr = val2
                     self.update_inst()
                     continue
+
             elif self.opcode == 7:
                 val1          = self.get_arg(self.param_mode[0], args[0], self.data)
                 val2          = self.get_arg(self.param_mode[1], args[1], self.data)
@@ -85,6 +89,7 @@ class Intcode():
                     self.data[args[2]] = '1'
                 else:
                     self.data[args[2]] = '0'
+
             elif self.opcode == 8:
                 val1          = self.get_arg(self.param_mode[0], args[0], self.data)
                 val2          = self.get_arg(self.param_mode[1], args[1], self.data)
@@ -92,6 +97,7 @@ class Intcode():
                     self.data[args[2]] = '1'
                 else:
                     self.data[args[2]] = '0'
+
             self.ptr += num + 1
             self.update_inst()
 

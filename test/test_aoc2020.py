@@ -4,12 +4,12 @@
 import unittest
 
 # Local
-from aoc2020 import *
+from aoc_2020 import *
 
 class Test_aoc2020(unittest.TestCase):
 
     def test_day_1(self):
-        data = get_input('input/day_1.txt')
+        data = get_input('data/2020/day_1.txt')
         
         # Part 1
         part = 1
@@ -20,7 +20,7 @@ class Test_aoc2020(unittest.TestCase):
         self.assertEqual(day_1(part, data), 130933530)
 
     def test_day_2(self):
-        data = get_input('input/day_2.txt')
+        data = get_input('data/2020/day_2.txt')
         
         # Part 1
         part = 1

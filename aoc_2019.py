@@ -1,6 +1,11 @@
+# Python Standard Library
 import argparse
 import os
 import sys
+
+# pypi
+
+# Common
 from intcode import Intcode
 
 def get_input(file):
@@ -26,6 +31,7 @@ def day_1(part, data):
         return total
 
 def day_2(part, data):
+
     data = data[0].strip().split(',')
 
     if part == 1:
@@ -52,7 +58,6 @@ def day_3(part, data):
                   'R': ( 0,  1),}
 
     # Part 1
-
     """
     Each input has two rows of comma separated strings.
     <direction><number of steps> Example: R8 means go right 8 steps.
@@ -127,7 +132,19 @@ def day_4(part, data):
     return counter
 
 def day_5(part, data):
-        pass
+    
+    data = data[0].split(',')
+
+    if part == 1:
+        program = Intcode(data)
+        program.run(1)
+        return program.ID
+
+    elif part == 2:
+        program = Intcode(data)
+        program.run(5)
+        return program.ID
+
 def day_6(part, data):
         pass
 def day_7(part, data):
@@ -205,7 +222,8 @@ if __name__ == "__main__":
     solutions[3][2] = day_3
     solutions[4][1] = day_4
     solutions[4][2] = day_4
-
+    solutions[5][1] = day_5
+    solutions[5][2] = day_5
 
     # Print input
     if args.verbose:
