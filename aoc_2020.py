@@ -4,7 +4,7 @@ import os
 import re
 import sys
 
-from collections import Counter
+from collections import Counter, defaultdict, deque
 
 # pypi
 
@@ -78,54 +78,284 @@ def day_2(part, data):
     return valid
 
 def day_3(part, data):
-    pass
-
+        
+    def explore(right: int, down: int, forest: list):
+        x = 0
+        y = 0
+        y_length = len(forest[0].strip())
+        res = defaultdict(int)
+        while x < len(forest):
+            val = forest[x][y % y_length]
+            res[val] += 1
+            x += down
+            y += right
+        return res['#']
+    
+    if part == 1:        
+        return explore(3, 1, data)
+    elif part == 2:
+        slopes = [(1, 1),
+                  (3, 1),
+                  (5, 1),
+                  (7, 1),
+                  (1, 2)]
+        
+        res = 1
+        for slope in slopes:
+            res *= explore(slope[0], slope[1], data)
+        return res
+        
 def day_4(part, data):
-    pass
+
+    class Passport:
+        def __init__(self):
+            self.data = {
+                'byr': None,
+                'iyr': None,
+                'eyr': None,
+                'hgt': None,
+                'hcl': None,
+                'ecl': None,
+                'pid': None,
+                'cid': None
+            }
+        def add_attr(self, key, value):
+            if key not in self.data:
+                print(key)
+            if self.data[key]:
+                print(key, self.data[key])
+            self.data[key] = value
+
+        def is_valid(self, part):
+            if part == 1:
+                valid_attr = [key for key in self.data.keys() if self.data[key] and key != 'cid']
+                return len(valid_attr) == 7
+            elif part == 2:
+                p = self.data
+                # byr (Birth Year) - four digits; at least 1920 and at most 2002.
+                if not (p['byr'] and re.match('^[0-9]{4}$', p['byr']) and 1920 <= int(p['byr']) <= 2002):
+                    return False
+                # iyr (Issue Year) - four digits; at least 2010 and at most 2020.
+                if not (p['iyr'] and re.match('^[0-9]{4}$', p['iyr']) and 2010 <= int(p['iyr']) <= 2020):
+                    return False
+                # eyr (Expiration Year) - four digits; at least 2020 and at most 2030.
+                if not (p['eyr'] and re.match('^[0-9]{4}$', p['eyr']) and 2020 <= int(p['eyr']) <= 2030):
+                    return False
+
+                # hgt (Height) - a number followed by either cm or in:
+                    # If cm, the number must be at least 150 and at most 193.
+                    # If in, the number must be at least 59 and at most 76.
+                flag = True
+                if p['hgt']:
+                    res = re.match('^([0-9]{2,3})(cm|in)$', p['hgt'])
+                    if res:
+                        unit = res.groups()[1]
+                        val  = int(res.groups()[0])
+                        if (unit == 'cm' and 150 <= val <= 193) or (unit == 'in' and 59 <= val <= 76):
+                            flag = False
+                if flag:
+                    return False
+
+                # hcl (Hair Color) - a # followed by exactly six characters 0-9 or a-f.
+                if not (p['hcl'] and re.match('^#[0-9a-f]{6}$', p['hcl'])):
+                    return False
+                # ecl (Eye Color) - exactly one of: amb blu brn gry grn hzl oth.
+                if not (p['ecl'] and p['ecl'] in ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']):
+                    return False
+                # pid (Passport ID) - a nine-digit number, including leading zeroes.
+                if not (p['pid'] and re.match('^[0-9]{9}$', p['pid'])):
+                    return False       
+                # cid (Country ID) - ignored, missing or not.
+                return True
+
+            else:
+                raise Exception("Invalid input: part == 1 or 2")
+
+    batches  = []
+    passport = Passport()
+    for line in data:
+        if len(line) > 1:
+            line = line.strip()
+            line = line.split(' ')
+            for demo in line:
+                key = demo.split(':')[0]
+                val = demo.split(':')[1]
+                passport.add_attr(key, val)
+        else:
+            if passport.is_valid(part):
+                batches.append(passport)
+            passport = Passport()
+
+    if passport.is_valid(part):
+        batches.append(passport)
+
+    return len(batches)
 
 def day_5(part, data):
-    pass
+
+    def get_seat_id(bsp:str, left:str, right:str, bound:tuple):
+        bsp = bsp.strip()
+        if not len(bsp) in [7, 3]:
+            raise Exception(f"Invalid binary space partitioning length: {bsp}")
+        
+        rows = list(bound)
+        for char in bsp:
+            num_rows = rows[1] - rows[0] + 1
+            if char == left:
+                lower = rows[0]
+                upper = rows[0] + (num_rows) // 2 - 1
+                rows  = [lower, upper]
+            elif char == right:
+                lower = rows[0] + (num_rows) // 2
+                upper = rows[1]
+                rows  = [lower, upper]
+            else:
+                raise Exception(f"Invalid binary space partitioning input: {bsp}")
+            # print(char, rows)
+        
+        if rows[0] != rows[1]:
+            raise Exception(f"Invalid result: {bsp} -> {rows}")
+            
+        return rows[0]
+
+    seats = []
+    for line in data:
+        line = line.strip()
+        row  = get_seat_id(line[:7], 'F', 'B', (0, 127))
+        col  = get_seat_id(line[7:], 'L', 'R', (0, 7))
+        seat_id = row * 8 + col
+        seats.append(seat_id)
+
+    if part == 1:
+        return max(seats)
+    elif part == 2:
+        seats.sort()
+        for i in range(len(seats)-1):
+            num = seats[i]
+            if num + 2 == seats[i+1]:
+                return num + 1
 
 def day_6(part, data):
-        pass
+
+    def count_yes(group, part):
+        num_passengers = len(group)
+        group = "".join(group)
+        group = Counter(group)
+        if part == 1:
+            return len(group)
+        elif part == 2:
+            return len([1 for val in group.values() if val == num_passengers])
+                
+    groups = []
+    group  = []
+    for line in data:
+        line = line.strip()
+        if line:
+            group.append(line)
+        else:
+            groups.append(count_yes(group, part))
+            group = []
+
+    groups.append(count_yes(group, part))
+
+    return sum(groups)
+
 def day_7(part, data):
-        pass
+
+    if part == 1:
+        # Create reverse graph
+        g = defaultdict(set)
+        src_pattern  = r'^([a-z ]+) bag'
+        tgts_pattern = r'[0-9]+ ([a-z ]+) bag'
+        for line in data:
+            line = line.strip()
+            src  = re.match(src_pattern, line).groups()[0]
+            tgts = re.findall(tgts_pattern, line)
+            for tgt in tgts:
+                g[tgt].add(src)
+        
+        # BFS
+        queue = deque(['shiny gold'])
+        visited = set()
+        while queue:
+            node = queue.pop()
+            visited.add(node)
+            for tgt in g[node]:
+                if tgt not in visited:
+                    queue.append(tgt)
+
+        return len(visited) - 1
+
+    elif part == 2:
+        # Create directed graph
+        g = defaultdict(set)
+        # Create bag count lookup
+        bag_cost = defaultdict(int)
+
+        src_pattern  = r'^([a-z ]+) bag'
+        tgts_pattern = r'([0-9]+) ([a-z ]+) bag'
+        for line in data:
+            line = line.strip()
+            src  = re.match(src_pattern, line).groups()[0]
+            tgts = re.findall(tgts_pattern, line)
+            for tgt in tgts:
+                num_bags = int(tgt[0])
+                bag_name = tgt[1]
+                g[src].add((num_bags, bag_name))
+                bag_cost[src] += num_bags
+        
+        # BFS
+        queue   = deque(['shiny gold'])
+        total   = 0
+        while queue:
+            node = queue.pop()
+            total += bag_cost[node]
+            print(node, total)
+            for tgt in g[node]:
+                num_bags = tgt[0]
+                bag_name = tgt[1]
+                for _ in range(num_bags):
+                    queue.append(bag_name)
+
+        return total
+
+
 def day_8(part, data):
-        pass
+    pass
 def day_9(part, data):
-        pass
+    pass
 def day_10(part, data):
-        pass
+    pass
 def day_11(part, data):
-        pass
+    pass
 def day_12(part, data):
-        pass
+    pass
 def day_13(part, data):
-        pass
+    pass
 def day_14(part, data):
-        pass
+    pass
 def day_15(part, data):
-        pass
+    pass
 def day_16(part, data):
-        pass
+    pass
 def day_17(part, data):
-        pass
+    pass
 def day_18(part, data):
-        pass
+    pass
 def day_19(part, data):
-        pass
+    pass
 def day_20(part, data):
-        pass
+    pass
 def day_21(part, data):
-        pass
+    pass
 def day_22(part, data):
-        pass
+    pass
 def day_23(part, data):
-        pass
+    pass
 def day_24(part, data):
-        pass
+    pass
 def day_25(part, data):
-        pass
+    pass
 
 if __name__ == "__main__":
 
